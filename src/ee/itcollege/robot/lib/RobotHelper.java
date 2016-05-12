@@ -173,14 +173,14 @@ public class RobotHelper {
 	
 	/**
 	 * Press down a key
-	 * @param keyEvent - a keycode constant from {@link java.awt.KeyEvent}
+	 * @param keyEvent - a keycode constant from {@link java.awt.event.KeyEvent}
 	 */
 	public void keyPress(int keyEvent) {
 		robot.keyPress(keyEvent);
 	}
 	/**
 	 * Press down a key, sleep for some time, and release the key
-	 * @param keyEvent - a keycode constant from {@link java.awt.KeyEvent}
+	 * @param keyEvent - a keycode constant from {@link java.awt.event.KeyEvent}
 	 * @param millis - for how long to sleep
 	 */
 	public void keyPress(int keyEvent, int millis) {
@@ -190,7 +190,7 @@ public class RobotHelper {
 	}
 	/**
 	 * Release a key
-	 * @param keyEvent - a keycode constant from {@link java.awt.KeyEvent}
+	 * @param keyEvent - a keycode constant from {@link java.awt.event.KeyEvent}
 	 */
 	public void keyRelease(int keyEvent) {
 		robot.keyRelease(keyEvent);

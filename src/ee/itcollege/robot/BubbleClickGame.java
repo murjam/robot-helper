@@ -68,7 +68,7 @@ public class BubbleClickGame extends Application {
 			for (int offsetX = padding + stepX / 2; offsetX < w - padding; offsetX += stepX) {
 				for (int offsetY = stepY / 2 + (size > 7 ? 30: 0); offsetY < h; offsetY += stepY) {
 					r.mouseMove(x + offsetX, y + offsetY);
-					r.sleep(40);
+					r.sleep(20);
 					r.capture(GAME_FIELD);
 					Color color = r.getColor(GAME_FIELD, offsetX, offsetY);
 					//System.out.println(color);
@@ -138,6 +138,10 @@ public class BubbleClickGame extends Application {
 		gameArea.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> gameArea.close());
 		r.closeOverlayAfter(gameArea, 2000);
 
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
 	}
 
 }
