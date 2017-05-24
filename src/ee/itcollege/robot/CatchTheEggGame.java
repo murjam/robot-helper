@@ -4,6 +4,7 @@ package ee.itcollege.robot;
 import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -22,6 +23,7 @@ public class CatchTheEggGame extends Application {
 	
 	private static final String GAME_FIELD = "gameField";
 	private static final String NEST_ROW = "nestRow";
+	private static final String LOOK_FOR_EGGS_ROW = "eggsRow";
 	private static final String ALL = "all";
 	
 	RobotHelper r;
@@ -29,6 +31,7 @@ public class CatchTheEggGame extends Application {
 	@Override
 	public void start(Stage win) throws Exception {
 		r = new RobotHelper();
+		r.mouseClick(20, 180); // open Firefox
 		
 		VBox layout = new VBox();
 		layout.setSpacing(10);
@@ -52,36 +55,78 @@ public class CatchTheEggGame extends Application {
 		win.setScene(scene);
 		win.setAlwaysOnTop(true);
 		win.show();
-		win.setOnCloseRequest(e -> System.exit(0));
+		win.setOnCloseRequest(e -> {
+			r.mouseClick(20, 400); // open Eclipse
+			System.exit(0);
+		});
 	}
 	
 	void playTheGame(MouseEvent e) {
 		Rectangle area = r.getArea(GAME_FIELD);
-		int x = (int) area.getX();
-		int y = (int) area.getY();
-		int w = (int) area.getWidth();
-		int h = (int) area.getHeight();
+		int gameFieldX = (int) area.getX();
+		int gameFieldY = (int) area.getY();
+		int gameFieldW = (int) area.getWidth();
+		int gameFieldH = (int) area.getHeight();
 		
-		r.mouseClick(x + w / 2, y - 15); // click on browser address bar
+		r.mouseClick(gameFieldX + gameFieldW / 2, gameFieldY - 15); // click on browser address bar
 		r.sleep(100);
 		r.keyPress(KeyEvent.VK_ENTER, 100);
 		r.sleep(500);
-		r.mouseClick(x + w / 2, y + h / 2);
+		r.mouseClick(gameFieldX + gameFieldW / 2, gameFieldY + gameFieldH / 2 - 20); // hit start
 		
 		
 		r.sleep(1000);
 		
-		int nestY = y + h - h / 10;
-		r.setArea(NEST_ROW, x, nestY, w, 1);
+		int nestY = gameFieldY + gameFieldH - gameFieldH / 10;
+		r.setArea(NEST_ROW, gameFieldX, nestY, gameFieldW, 1);
+		
+		int eggRowY = (int) (gameFieldY + (gameFieldH / 3.));
+		
+		Rectangle eggsRow = r.setArea(LOOK_FOR_EGGS_ROW, gameFieldX, eggRowY, gameFieldW, 1);
+		Stage eggsRowOverlay = r.createOverlay(LOOK_FOR_EGGS_ROW);
+		eggsRowOverlay.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+			eggsRowOverlay.close();
+		});
+		
+		r.mouseClick(gameFieldX + gameFieldW / 2, eggRowY + 20);
 		
 		
-		
-		
-		/*
+		ArrayList<Integer> eggsXcoordinates = new ArrayList<Integer>();
+		int nextX = 0;
 		while (true) {
-			r.keyPress(KeyEvent.VK_RIGHT, 200 + (int)(Math.random() * 200));
-			r.keyPress(KeyEvent.VK_LEFT, 200 + (int)(Math.random() * 200));
-		}*/
+			r.capture(LOOK_FOR_EGGS_ROW);
+			for (int eggRowX = 0; eggRowX < eggsRow.getWidth(); eggRowX++) {
+				Color color = r.getColor(LOOK_FOR_EGGS_ROW, eggRowX, 0);
+				if (isEggColor(color)) {
+					System.out.println("found egg on " + eggRowX);
+					r.mouseMove(gameFieldX + eggRowX, eggRowY);
+					eggsXcoordinates.add(eggRowX);
+					break;
+				}
+			}
+			
+			if (!eggsXcoordinates.isEmpty()) {
+				nextX = eggsXcoordinates.remove(0);
+			}
+			
+			
+			int nestX = findNestX();
+			
+			r.keyRelease(KeyEvent.VK_LEFT);
+			r.keyRelease(KeyEvent.VK_RIGHT);
+			if (Math.abs(nextX - nestX) < 40) {
+				// wait for the egg
+			}
+			else if (nextX > nestX) {
+				r.keyPress(KeyEvent.VK_RIGHT);
+			}
+			else {
+				r.keyPress(KeyEvent.VK_LEFT);
+			}
+			
+//			r.keyPress(KeyEvent.VK_RIGHT, 200 + (int)(Math.random() * 200));
+//			r.keyPress(KeyEvent.VK_LEFT, 200 + (int)(Math.random() * 200));
+		}
 		
 	}
 	
@@ -130,6 +175,10 @@ public class CatchTheEggGame extends Application {
 		});
 	}
 	
+	boolean isEggColor(Color c) {
+		Color eggColor = new Color(245, 161, 58);
+		return isSimilarColor(eggColor, c);
+	}
 	
 	boolean isSimilarColor(Color c1, Color c2) {
 		return Math.abs(c1.getRed()-c2.getRed()) < 10

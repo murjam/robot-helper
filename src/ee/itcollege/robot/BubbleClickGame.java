@@ -58,7 +58,7 @@ public class BubbleClickGame extends Application {
 		r.mouseClick(x + w / 2, y + h * .6);
 		r.sleep(100);
 		
-		for (int size = 1; size < 10; size++) {
+		for (int size = 1; size < 11; size++) {
 			int padding = w / 10;
 			int stepX = (w - padding * 2) / size;
 			int stepY = h / size;

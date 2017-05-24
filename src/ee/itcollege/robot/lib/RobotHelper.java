@@ -63,7 +63,7 @@ public class RobotHelper {
 	 * @return the newly created area
 	 */
 	public Rectangle setArea(String areaId, double x, double y, double width, double height) {
-		 Rectangle area = new Rectangle((int) x, (int) y, (int)screen.getWidth(), (int) screen.getHeight());
+		 Rectangle area = new Rectangle((int) x, (int) y, (int) width, (int) height);
 		 captureAreas.put(areaId, area);
 		 return area;
 	}
